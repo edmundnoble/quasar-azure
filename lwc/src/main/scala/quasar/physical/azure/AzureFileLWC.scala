@@ -18,7 +18,7 @@ package quasar.physical.azure
 
 import quasar.fs.FileSystemType
 import quasar.fs.mount.ConnectionUri
-import quasar.mimir.{LightweightConnector, LightweightFileSystem, SlamDB}
+import quasar.mimir.{LightweightConnector, LightweightFileSystem, SlamEngine}
 import slamdata.Predef._
 
 import org.http4s.client.blaze.PooledHttp1Client
@@ -43,7 +43,7 @@ final class AzureFileLWC() extends LightweightConnector {
     }
 }
 
-object AzureFileDB extends SlamDB {
+object AzureFileDB extends SlamEngine {
   val Type = FileSystemType("azurefile")
   val lwc = new AzureFileLWC()
 }

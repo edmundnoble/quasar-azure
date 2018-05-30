@@ -94,7 +94,6 @@ concurrentRestrictions in Global := {
 concurrentRestrictions in Global += Tags.exclusive(ExclusiveTest)
 
 lazy val publishSettings = commonPublishSettings ++ Seq(
-  publishAsOSSProject := false,
   organizationName := "Slamdata Inc.",
   organizationHomepage := Some(url("http://quasar-analytics.org")),
   homepage := Some(url("https://github.com/quasar-analytics/quasar-azure"))

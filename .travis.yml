@@ -4,42 +4,49 @@ jdk: oraclejdk8
 dist: trusty
 sudo: false
 
-script: 
-  - sbt test lwc/assembly
-
-#before_deploy:
-  #- chmod +x scripts/*
-  #- . ./scripts/version
-  #- . ./scripts/travis_tag
-
-#deploy:
-  #provider: releases
-  #api_key:
-    #secure: "Aeqn0XLb0iFbnTWBatFiHaLb7J0TaBw6ry69MjriF53rhHbyZvXE4B1nUO9/li+QYeEXR7bf/UHmPGX1pst8TFtNEhtzRoAlxn8z8z698J5ymKWcVXGAJUO7gv1QCRxCFusBR0BxMZf/lNxjYOjOCOs2EwkYK2VU3uvuo4LviHKX8Ggm1g/pvHPjT0orb3NzFFMi/JNLjwGLj/8RkNqeibHVb07aM1S+Yvh5QGRTd1oJwV6h2XPhyCl1PoywnU7jt/vHs0HOU5OXG+oJ0gtSZ3SjYJajN3/thbLzQOAClrxaoF7YGw8uPQa1vxCqNq9LOJwqBI2zcU5CbiCKP0vOjz+ECOWPaF5yTi8QaQXi5Zc8F5iHHbXSENVwffwELV40NlNMi6WOBVK4qyROfQjfRD9KYtwUTtBCjnvkBY+618BtrTFuE0VqsrMiobMItKNl/7NPfsiI00Rat3seqxPWhbSGvEV4Eyx0RB+THSnMeTgDeuRJVahazYFCpbq0l628XZB90h7LHq3qcijnZQLC2HLC+1x/z8i4r5JwialC8+Tl8q9ZuO6n9nNKGVWw5Wt2WK7JYWq/2J1HTFf+lVp9OaGi7wMfTO48g4nrnQ6V5H5SqyOfL7ofgt6ktPcBh+vKqTvHlXoezWLlT9r8UFrRSFzdD/hU+pQp6eCXcf2I2z8="
-  ##file_glob: true
-  #file:
-    #- runner/target/scala-2.12/quasar-azure-assembly-$VERSION.jar
-  #skip_cleanup: true
-  #script: 
-    #- ./scripts/version
-    #- ./scripts/update_nix_file
-  #on:
-    #tags: false
-    ##all_branches: true
-    ## Omit tagged builds and publish on master and backport/*
-    ##condition: $TRAVIS_TAG = '' && ($TRAVIS_BRANCH == "master" || $TRAVIS_BRANCH == backport/*)
+script:
+  - sbt test lwc/assembly assembleLWC
 
 branches:
   except:
-    - /^v\d+\.\d+\.\d+$/ # don't redundantly build tags
+  - /^v\d+\.\d+\.\d+$/ # don't redundantly build tags
 
 cache:
   directories:
-    - $HOME/.coursier/cache
-    - $HOME/.ivy2/cache
-    - $HOME/.sbt
+  - $HOME/.coursier/cache
+  - $HOME/.ivy2/cache
+  - $HOME/.sbt
 
 before_cache:
   - find "$HOME/.sbt/" -name '*.lock' -print0 | xargs -0 rm
   - find "$HOME/.ivy2/" -name 'ivydata-*.properties' -print0 | xargs -0 rm
 
+env:
+  global:
+    - SBT=./sbt
+    # ENCRYPTION_PASSWORD
+    - secure: "pFb3PQw49eG5CYdfgVqJpNta2DOAIVND7YBV0ywwOoYWHSGTYN1fJ+aeCHMdg8mFYclBw/jYZTkFNJNvNhF1EyoZbcoorN5J+YqoBNfxfDr9UwefEOai3neu92eTQnTEbh3NQ6vW5OQiPYQCJ1fEAQsy4ae0uKQTnM/SZi8E34Bi9Hq/QnTO0LCk7eVAqYkLsAygqFhUEHFACfdvgM7P2qJ4QoTENRTraDB7mwvoeZ28iUMAuo2faBj+nL+jIlGUF+8muKtBCBSjUWGKxu8bYHG08pdOe+EXdpXs/7V0uOU+D4c7DvRmdLIJISYt/sDWEKIp/k7kRBy9AM0cPrTk+/7xica/aw1veYNCkOUCMXjTvJtekFtomw9PWgce/Od3mukWgunapD39UUnGoLctlbdxJRmRg4cVbVsd/6xv6ZNFQRVeVlU5hz+A00tLY+Js3seCD6v+vwy3xQXlxvoXgG5w3skn0AoTr11SEFLAQPHWk00yMd3FJYPVkyr9EkMfPWhhK8Z2HGtUCz4Rfq7YNwLAYPttPo4EMBv3jroU7DIfEgbOPbmZbj1sSLel7eQQb1E7Dvd5UTo1cnfkmQSokhs77FyI9SlpnRiEd01VLfbGUBlS53qhLSIudtKc3Kpx85LRo81IOoksGPQDhjj0iUkQNM/gtY3XfUAttdABZtg=" 
+    # GITHUB_TOKEN
+    - secure: "o/UP8V+BYmgtm3j1vcbpp8xzBc3C/LBJzB+zT/vxt8y/LNsaMUG5/pa9peIxW3gO8R73j8ysSXkCY9BCKs7BllAe4bVnlIfvjsRr0gDNJrznbv2IgaKODlvfiF1TGrgy2dwsKvWUAcvF5VO9gCHpV9eHuq9A0gcdGGa22EdOWSGa8cty9qX5Ni/hXTWhbpsflVFTc2/R5GOQVAQA2v4SCCphX/f1j2Yqtx8hGvLX7UmNdXsTG74yuLDjMa6HMuvnT6Ri2Cd28WWg46brTliIToTgqjxFxDXZKcMMhrQQIkm6WXTwpXprOnk8RVo8Ev4fejc151Kn+hCWD6bYJ/LxyhnM27+C6/BXnMI/30WhkQY5c3JQtBXWGwGe9CI8lrm8czknguhQiDTbPANK95U8ILwzPxQZA9YcZOqWoGUSTS8f9H7lfnHdkAEExZgAokqfH21awlDsfATJFjvOMvQNjLhAOZ2fK3tc+/88brxWQ/8RjTA+Ez0QWxfU+N+n9rEyEtWPnS2zHdQaGKeH9FLePmMycxcDq34hDD3xibrYi/w1/GHL90lNi4XHneHLC+aeLEK/p2RA2GEpPH1MRd3ZCm8xleTQCWiEwuGFz+PGd4tSuyQzFxztW2e8938M2jS6v4KDM3kwRgARUcZHVssQgPDs6CJILHgzHzAlIrkDl+s="
+    # GITHUB_ACCESS_TOKEN
+    - secure: "l+sD7utPod3aUrtSe/Q8EJvawxP+EFn13YEGo9a42YFPP6W/JMK1VR6yTa+36+2/GR25WhRwBD9WBrMsulEb+qYuWVsp92Eu/TQorkfM5C9D4UIbhDOYWJOuKbEl6FtT7RieWeZYbCRYRrFvXECUFlLNm3FN/J48VPDu+DFaC+qiz4JLoaPTIvbAZwvpeeOE75pMx5z2elYPB/pSwirolFAPoMhz49KT2I/5whAJbBMan829Dt3LKc15GXgb18Jt5wiV9T/cHgMKtrypbupdnU98OpLVC5EhzlzxF99YYvvStaod9qJEmogoSTPPjv9sO2qNURosyHZfOH5lJeVGwPBATbPcn52oN9Wcy8rNLl/04o6DElz68lRG9TWlsa6ZZm3hQ+bEAZ6cca11egqPp71rcL5TCMnTMHT7mW3o0dU9K0FXnpCxFYh2hUFGQ6ac23+2j3F1bCC9fKFlLLNsJNoY33Usd0iEQ776Nsuuy8q3j8ndb/B75idt+/5E+u+Q44HufWc/lpQfBF3dJ0UvE88QtAmeoAunwNGi3bwpmJwi5I9XdxbRCDtv8G+R5TiatC4qDWKfIl/0hO8ixVxmBFZcasiUX5NNZjReO9P5TuKpkeDn82kLn8LugrC/7AeuMjxhTSzvMKQvo+EAiCn6T2+W+Qem79Hkux02oFtt+yk="
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "W7dalSaVSxIveCTs6H+gZjETdrp26MJr5/q5uncg2R3uEJ3WteejYahLih9DoYAekyegJznxF3pyc9Jha+j9n77BaFVzhYJEOaz8C1tBaw8oxfts3yohfAluxZ/oZ7sweCiIoFUv0Txb3aCPanwOj9u1mL/7ogFfyuN3O74HxPmeKTczjLVZklHnnqp/1gtdkrshKVuwpprwlq8gdZbZ9pOr9Lrm0AjcKjMXk0gze8pfBC5gDQZTdHJobxBsIQq+uwpQegEwc4hwzAtWKjzCxRuuQM63IoANo+f1PEAlbEPNyku02cjqNikVVxKSSEiNgn2MdS9/8/PRnCOi4ubzYqRIeiipynlcjcyfj/DeAL277+9IZwpl8e1TW0emrwkZXrK+P++i9LAWVByOa2rkJTj0iVfJanR1NKbehUeUo73YKE+eRmwpuP2KtvnKxgYTOuNYwbmYHVlcVc3zsJTCQqbe6cwhOmDOAve4knp7ceELRdBQ5nPaq93VIOWQMjd9PwuH/VJaVczS1aTJZHF//un8BYqlFbGHjGR5hB1eylSLlZDY2otzM6SdpsnNaC4qv+jVRD1GrfNiOoUVCBnbSQrr5lvr0i/BkRViQrluf6cWI0OnekY2os1IOewJcAjqwWCT6qKxj2LSVrDPxlgXobfaaZC5dZioKlii84GW7lg="
+  file_glob: false
+  file:
+    - .targets/lwc/scala-2.12/lwc.tar.gz
+  skip_cleanup: true
+  script:
+    - ./scripts/version
+  on:
+    tags: false
+    #all_branches: true
+    # Omit tagged builds and publish on master and backport/*
+    #condition: $TRAVIS_TAG = '' && ($TRAVIS_BRANCH == "master" || $TRAVIS_BRANCH == backport/*)
+
+
+before_deploy:
+  - scripts/lwcPublishAndTag

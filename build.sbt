@@ -94,7 +94,7 @@ concurrentRestrictions in Global := {
 concurrentRestrictions in Global += Tags.exclusive(ExclusiveTest)
 
 lazy val publishSettings = commonPublishSettings ++ Seq(
-  performSonatypeSync := false,   // basically just ignores all the sonatype sync parts of things
+  publishAsOSSProject := false,
   organizationName := "Slamdata Inc.",
   organizationHomepage := Some(url("http://quasar-analytics.org")),
   homepage := Some(url("https://github.com/quasar-analytics/quasar-azure"))
@@ -171,6 +171,7 @@ lazy val repl = project
   .settings(name := "quasar-repl")
   .dependsOn(lwc)
   .settings(commonSettings)
+  .settings(noPublishSettings)
   .settings(targetSettings)
   .settings(excludeTypelevelScalaLibrary)
   .settings(

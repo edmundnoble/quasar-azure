@@ -15,6 +15,8 @@ object Dependencies {
 
   private val http4sVersion       = "0.16.6a"
 
+  private val specsVersion        = "4.0.2"
+
   // the connector's dependencies, excluding quasar.
   def lwcCore = Seq(
     "org.http4s"                 %% "http4s-scala-xml"          % http4sVersion,

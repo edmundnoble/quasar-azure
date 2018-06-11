@@ -18,6 +18,9 @@ package quasar.physical.azure
 
 import slamdata.Predef._
 
+import org.specs2.execute.Result
+import org.specs2.mutable.Specification
+
 import pathy._
 import quasar.Data
 import quasar.contrib.pathy._
@@ -50,7 +53,7 @@ object LWCTests {
 
   type T = Task[Unit]
 
-  def main(args: Array[String]) = {
+  def runTests[A](success: A, failure: String => A): Task[A] = {
     val testUri: ConnectionUri =
       ConnectionUri("https://slamdata.file.core.windows.net/testdata")
 
@@ -72,13 +75,13 @@ object LWCTests {
     (for {
       lwfs <- makeLwfs
       runTest = testLaws("My Connector", lwfs, testData)
-      _ <- gather(List(runTest), none).attempt.flatMap {
+      a <- gather(List(runTest), none).attempt.flatMap {
         case -\/(ex) =>
-          Task.delay(println(showThrowable(ex, 0)))
+          Task.delay(failure(showThrowable(ex, 0)))
         case \/-(_) =>
-          Task.delay(println("tests successful!"))
+          Task.delay(success)
       }
-    } yield ()).unsafePerformSync
+    } yield a)
   }
 
   def makeTestFS(lwfs: LightweightFileSystem): Task[TestFS] = {
@@ -279,4 +282,10 @@ object LWCTests {
       }
     }, "File existence".some).void
 
+}
+
+final class LWCTestSuite extends Specification {
+  "test LWC properties" >> {
+    LWCTests.runTests[Result](success, failure).unsafePerformSync must not(throwA[Exception])
+  }
 }

@@ -1,5 +1,7 @@
 # Quasar azure Connector
 
+[![Build Status](https://travis-ci.org/slamdata/quasar-azure.svg?branch=master)](https://travis-ci.org/slamdata/quasar-azure)
+
 A connector for the Quasar open source analytics engine, that
 provides it with access to azure.
 
